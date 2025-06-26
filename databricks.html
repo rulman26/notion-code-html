@@ -1,37 +1,71 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>Guía de Configuración de Databricks en AWS</title>
+  <title>Databricks on AWS - Setup Guide</title>
   <style>
-    body { font-family: sans-serif; line-height: 1.6; padding: 20px; background: #f9f9f9; }
-    h1, h2 { color: #2c3e50; }
-    pre { background: #eee; padding: 10px; border-radius: 6px; overflow-x: auto; }
-    code { font-family: monospace; color: #e74c3c; }
-    .step { margin-bottom: 30px; }
-    .check { color: green; font-weight: bold; }
-    .note { background: #fff3cd; border-left: 6px solid #ffeeba; padding: 10px; margin-top: 10px; }
+    body {
+      font-family: sans-serif;
+      line-height: 1.6;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    h1,
+    h2 {
+      color: #2c3e50;
+    }
+
+    pre {
+      background: #eee;
+      padding: 10px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: monospace;
+      color: #e74c3c;
+    }
+
+    .step {
+      margin-bottom: 30px;
+    }
+
+    .check {
+      color: green;
+      font-weight: bold;
+    }
+
+    .note {
+      background: #fff3cd;
+      border-left: 6px solid #ffeeba;
+      padding: 10px;
+      margin-top: 10px;
+    }
   </style>
 </head>
+
 <body>
 
-  <h1>🧭 Guía paso a paso: Configuración de Databricks en AWS</h1>
-  <p><strong>Objetivo:</strong> Configurar una cuenta de AWS para permitir que Databricks se conecte y despliegue recursos de forma segura.</p>
+  <h1>🧭 Step-by-Step Guide: Setting up Databricks on AWS</h1>
+  <p><strong>Goal:</strong> Configure your AWS account so Databricks can securely access and deploy resources.</p>
 
   <div class="step">
-    <h2>✅ Paso 1: Crear un Rol en IAM de AWS</h2>
+    <h2>✅ Step 1: Create an IAM Role in AWS</h2>
     <ul>
-      <li>Ir a <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank">IAM Roles</a>.</li>
-      <li>Click en <strong>Create Role</strong>.</li>
-      <li>Selecciona <strong>Another AWS Account</strong>.</li>
-      <li>Ingresa el <code>Account ID</code> proporcionado por Databricks.</li>
-      <li>Activa <strong>Require external ID</strong> y copia el ID de Databricks.</li>
+      <li>Go to <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank">IAM Roles</a>.</li>
+      <li>Click on <strong>Create Role</strong>.</li>
+      <li>Select <strong>Another AWS Account</strong>.</li>
+      <li>Enter the <code>Account ID</code> provided by Databricks.</li>
+      <li>Check <strong>Require external ID</strong> and paste the one provided by Databricks.</li>
     </ul>
   </div>
 
   <div class="step">
-    <h2>✅ Paso 2: Agregar políticas al Rol</h2>
-    <p>Copia este JSON como política personalizada:</p>
+    <h2>✅ Step 2: Attach Policies to the Role</h2>
+    <p>Create a custom policy using the JSON below:</p>
     <pre><code>{
   "Version": "2012-10-17",
   "Statement": [
@@ -48,12 +82,13 @@
     }
   ]
 }</code></pre>
-    <div class="note">🔐 <strong>Nota:</strong> Ajusta los permisos si deseas aplicar el principio de mínimo privilegio.</div>
+    <div class="note">🔐 <strong>Note:</strong> You can tailor permissions to follow the <strong>least
+        privilege</strong> principle.</div>
   </div>
 
   <div class="step">
-    <h2>✅ Paso 3: Crear política de confianza</h2>
-    <p>Ejemplo:</p>
+    <h2>✅ Step 3: Define a Trust Relationship Policy</h2>
+    <p>Example trust policy:</p>
     <pre><code>{
   "Version": "2012-10-17",
   "Statement": [
@@ -72,24 +107,22 @@
   ]
 }</code></pre>
   </div>
-
   <div class="step">
-    <h2>✅ Paso 4: Configurar el rol en la consola de Databricks</h2>
+    <h2>✅ Step 4: Connect the IAM Role in Databricks Console</h2>
     <ul>
-      <li>Ve al <strong>Admin Console</strong> de tu workspace Databricks.</li>
-      <li>Selecciona <strong>AWS Configuration</strong>.</li>
-      <li>Ingresa el ARN del rol y el External ID creado.</li>
+      <li>Go to your Databricks workspace <strong>Admin Console</strong>.</li>
+      <li>Open <strong>AWS Configuration</strong>.</li>
+      <li>Paste the Role ARN and the External ID you created.</li>
     </ul>
   </div>
-
   <div class="step">
-    <h2>✅ Paso 5: Verificar la conectividad</h2>
+    <h2>✅ Step 5: Verify the Setup</h2>
     <ul>
-      <li>Lanza un <strong>Cluster de prueba</strong>.</li>
-      <li>Intenta acceder a un bucket S3 desde un notebook.</li>
-      <li>Revisa <strong>CloudWatch</strong> para logs generados.</li>
+      <li>Launch a <strong>test cluster</strong>.</li>
+      <li>Try accessing an S3 bucket from a notebook.</li>
+      <li>Check <strong>CloudWatch</strong> for generated logs.</li>
     </ul>
   </div>
-
 </body>
+
 </html>
