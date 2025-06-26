@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Guía de Configuración de Databricks en AWS</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 20px; background: #f9f9f9; }
+    h1, h2 { color: #2c3e50; }
+    pre { background: #eee; padding: 10px; border-radius: 6px; overflow-x: auto; }
+    code { font-family: monospace; color: #e74c3c; }
+    .step { margin-bottom: 30px; }
+    .check { color: green; font-weight: bold; }
+    .note { background: #fff3cd; border-left: 6px solid #ffeeba; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h1>🧭 Guía paso a paso: Configuración de Databricks en AWS</h1>
+  <p><strong>Objetivo:</strong> Configurar una cuenta de AWS para permitir que Databricks se conecte y despliegue recursos de forma segura.</p>
+
+  <div class="step">
+    <h2>✅ Paso 1: Crear un Rol en IAM de AWS</h2>
+    <ul>
+      <li>Ir a <a href="https://console.aws.amazon.com/iam/home#/roles" target="_blank">IAM Roles</a>.</li>
+      <li>Click en <strong>Create Role</strong>.</li>
+      <li>Selecciona <strong>Another AWS Account</strong>.</li>
+      <li>Ingresa el <code>Account ID</code> proporcionado por Databricks.</li>
+      <li>Activa <strong>Require external ID</strong> y copia el ID de Databricks.</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h2>✅ Paso 2: Agregar políticas al Rol</h2>
+    <p>Copia este JSON como política personalizada:</p>
+    <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:*",
+        "s3:*",
+        "iam:PassRole",
+        "cloudwatch:*",
+        "logs:*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+    <div class="note">🔐 <strong>Nota:</strong> Ajusta los permisos si deseas aplicar el principio de mínimo privilegio.</div>
+  </div>
+
+  <div class="step">
+    <h2>✅ Paso 3: Crear política de confianza</h2>
+    <p>Ejemplo:</p>
+    <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::&lt;databricks-account-id&gt;:root"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "sts:ExternalId": "&lt;external-id-from-databricks&gt;"
+        }
+      }
+    }
+  ]
+}</code></pre>
+  </div>
+
+  <div class="step">
+    <h2>✅ Paso 4: Configurar el rol en la consola de Databricks</h2>
+    <ul>
+      <li>Ve al <strong>Admin Console</strong> de tu workspace Databricks.</li>
+      <li>Selecciona <strong>AWS Configuration</strong>.</li>
+      <li>Ingresa el ARN del rol y el External ID creado.</li>
+    </ul>
+  </div>
+
+  <div class="step">
+    <h2>✅ Paso 5: Verificar la conectividad</h2>
+    <ul>
+      <li>Lanza un <strong>Cluster de prueba</strong>.</li>
+      <li>Intenta acceder a un bucket S3 desde un notebook.</li>
+      <li>Revisa <strong>CloudWatch</strong> para logs generados.</li>
+    </ul>
+  </div>
+
+</body>
+</html>
